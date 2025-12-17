@@ -55,17 +55,20 @@ provider "kubernetes" {
         OAUTH_URL="https://oauth-openshift.apps.rosa.$CLUSTER_DOMAIN/oauth/authorize?client_id=openshift-challenging-client&response_type=token"
 
         # Request token using challenging client flow
-        RESPONSE=$(curl -skI -u "$OAUTH_USERNAME:$OAUTH_PASSWORD" -H "X-CSRF-Token: 1" "$OAUTH_URL" 2>&1)
+        # Use -D- to dump headers to stdout, follow redirects manually
+        HTTP_CODE=$(curl -sk -o /dev/null -w "%{http_code}" -u "$OAUTH_USERNAME:$OAUTH_PASSWORD" -H "X-CSRF-Token: 1" "$OAUTH_URL")
+        HEADERS=$(curl -skI -u "$OAUTH_USERNAME:$OAUTH_PASSWORD" -H "X-CSRF-Token: 1" "$OAUTH_URL" 2>&1)
 
         # Extract token from Location header redirect
-        LOCATION=$(echo "$RESPONSE" | grep -i "^location:" | tr -d '\r' || true)
+        LOCATION=$(echo "$HEADERS" | grep -i "^location:" | head -1 | tr -d '\r' || true)
         TOKEN=$(echo "$LOCATION" | sed -E 's/.*access_token=([^&]*).*/\1/')
 
         # Return ExecCredential JSON
-        if [ -n "$TOKEN" ] && [ "$TOKEN" != "$LOCATION" ]; then
+        if [ -n "$TOKEN" ] && [ "$TOKEN" != "$LOCATION" ] && [ "$TOKEN" != "" ]; then
           printf '{"apiVersion":"client.authentication.k8s.io/v1beta1","kind":"ExecCredential","status":{"token":"%s"}}' "$TOKEN"
         else
-          echo "Failed to obtain token. Response: $RESPONSE" >&2
+          echo "OAuth failed. HTTP=$HTTP_CODE URL=$OAUTH_URL Location=$LOCATION" >&2
+          echo "Headers: $HEADERS" >&2
           exit 1
         fi
       EOF

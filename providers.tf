@@ -36,26 +36,29 @@ provider "kubernetes" {
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "/bin/bash"
+    env = {
+      OAUTH_USERNAME = var.admin_username
+      OAUTH_PASSWORD = var.admin_password
+      CLUSTER_DOMAIN = local.k8s_cluster_domain
+    }
     args = [
       "-c",
       <<-EOF
         set -e
         # Skip auth if using placeholder (Phase 1)
-        if [ "${local.k8s_cluster_domain}" = "placeholder.local" ]; then
+        if [ "$CLUSTER_DOMAIN" = "placeholder.local" ]; then
           printf '{"apiVersion":"client.authentication.k8s.io/v1beta1","kind":"ExecCredential","status":{"token":"placeholder"}}'
           exit 0
         fi
 
         # OAuth endpoint is at apps subdomain, not API URL
-        OAUTH_URL="https://oauth-openshift.apps.${local.k8s_cluster_domain}/oauth/authorize?client_id=openshift-challenging-client&response_type=token"
+        OAUTH_URL="https://oauth-openshift.apps.$CLUSTER_DOMAIN/oauth/authorize?client_id=openshift-challenging-client&response_type=token"
 
         # Request token using challenging client flow
-        RESPONSE=$(curl -skI -u "${var.admin_username}:${var.admin_password}" \
-          -H "X-CSRF-Token: 1" \
-          "$OAUTH_URL" 2>&1)
+        RESPONSE=$(curl -skI -u "$OAUTH_USERNAME:$OAUTH_PASSWORD" -H "X-CSRF-Token: 1" "$OAUTH_URL" 2>&1)
 
         # Extract token from Location header redirect
-        LOCATION=$(echo "$RESPONSE" | grep -i "^location:" | tr -d '\r')
+        LOCATION=$(echo "$RESPONSE" | grep -i "^location:" | tr -d '\r' || true)
         TOKEN=$(echo "$LOCATION" | sed -E 's/.*access_token=([^&]*).*/\1/')
 
         # Return ExecCredential JSON

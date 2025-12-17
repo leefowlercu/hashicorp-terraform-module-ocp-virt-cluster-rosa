@@ -12,6 +12,5 @@ provider "aws" {
   }
 }
 
-provider "rhcs" {
-  token = var.rhcs_token
-}
+### ROSA Provider - Authorization via RHCS_TOKEN Environment Variable
+provider "rhcs" {}

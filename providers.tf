@@ -17,7 +17,7 @@ provider "rhcs" {}
 
 ### Kubernetes Provider - For creating service account token
 provider "kubernetes" {
-  host     = module.rosa_hcp.cluster_api_url
+  host     = "https://api.i5l5s2f8k3e6t2a.b08k.p3.openshiftapps.com:443"
   username = var.admin_username
   password = var.admin_password
   insecure = true

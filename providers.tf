@@ -51,8 +51,8 @@ provider "kubernetes" {
           exit 0
         fi
 
-        # OAuth endpoint is at apps.rosa subdomain for ROSA HCP clusters
-        OAUTH_URL="https://oauth-openshift.apps.rosa.$CLUSTER_DOMAIN/oauth/authorize?client_id=openshift-challenging-client&response_type=token"
+        # OAuth endpoint for ROSA HCP is at oauth.<cluster_domain>:443
+        OAUTH_URL="https://oauth.$CLUSTER_DOMAIN:443/oauth/authorize?client_id=openshift-challenging-client&response_type=token"
 
         # Request token using challenging client flow
         # Use -D- to dump headers to stdout, follow redirects manually

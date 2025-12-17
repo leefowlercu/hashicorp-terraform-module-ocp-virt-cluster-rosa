@@ -1,3 +1,4 @@
+### AWS Provider Configuration - Authorization via HCP Dynamic AWS Credentials
 provider "aws" {
   region = var.aws_region
 

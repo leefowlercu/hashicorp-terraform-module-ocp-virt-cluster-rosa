@@ -55,9 +55,10 @@ provider "kubernetes" {
         OAUTH_URL="https://oauth.$CLUSTER_DOMAIN:443/oauth/authorize?client_id=openshift-challenging-client&response_type=token"
 
         # Request token using challenging client flow
-        # Use -D- to dump headers to stdout, follow redirects manually
-        HTTP_CODE=$(curl -sk -o /dev/null -w "%{http_code}" -u "$OAUTH_USERNAME:$OAUTH_PASSWORD" -H "X-CSRF-Token: 1" "$OAUTH_URL")
-        HEADERS=$(curl -skI -u "$OAUTH_USERNAME:$OAUTH_PASSWORD" -H "X-CSRF-Token: 1" "$OAUTH_URL" 2>&1)
+        # Build auth header manually to avoid shell escaping issues with special characters
+        AUTH_HEADER=$(printf '%s:%s' "$OAUTH_USERNAME" "$OAUTH_PASSWORD" | base64 | tr -d '\n')
+        HTTP_CODE=$(curl -sk -o /dev/null -w "%{http_code}" -H "Authorization: Basic $AUTH_HEADER" -H "X-CSRF-Token: 1" "$OAUTH_URL")
+        HEADERS=$(curl -skI -H "Authorization: Basic $AUTH_HEADER" -H "X-CSRF-Token: 1" "$OAUTH_URL" 2>&1)
 
         # Extract token from Location header redirect
         LOCATION=$(echo "$HEADERS" | grep -i "^location:" | head -1 | tr -d '\r' || true)

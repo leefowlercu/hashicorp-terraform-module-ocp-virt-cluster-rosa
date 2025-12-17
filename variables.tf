@@ -67,11 +67,3 @@ variable "admin_password" {
   sensitive   = true
   description = "The password for the cluster admin user."
 }
-
-### RHCS Variables
-
-variable "rhcs_token" {
-  type        = string
-  sensitive   = true
-  description = "The Red Hat Cloud Services API token for authentication."
-}

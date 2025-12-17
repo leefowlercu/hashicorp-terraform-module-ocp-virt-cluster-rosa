@@ -51,8 +51,8 @@ provider "kubernetes" {
           exit 0
         fi
 
-        # OAuth endpoint is at apps subdomain, not API URL
-        OAUTH_URL="https://oauth-openshift.apps.$CLUSTER_DOMAIN/oauth/authorize?client_id=openshift-challenging-client&response_type=token"
+        # OAuth endpoint is at apps.rosa subdomain for ROSA HCP clusters
+        OAUTH_URL="https://oauth-openshift.apps.rosa.$CLUSTER_DOMAIN/oauth/authorize?client_id=openshift-challenging-client&response_type=token"
 
         # Request token using challenging client flow
         RESPONSE=$(curl -skI -u "$OAUTH_USERNAME:$OAUTH_PASSWORD" -H "X-CSRF-Token: 1" "$OAUTH_URL" 2>&1)

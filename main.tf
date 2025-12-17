@@ -2,10 +2,10 @@ module "rosa_hcp" {
   source  = "terraform-redhat/rosa-hcp/rhcs"
   version = "1.7.1"
 
-  cluster_name               = local.cluster_name
+  cluster_name               = var.cluster_name
   openshift_version          = var.openshift_version
-  account_role_prefix        = local.cluster_name
-  operator_role_prefix       = local.cluster_name
+  account_role_prefix        = var.cluster_name
+  operator_role_prefix       = var.cluster_name
   replicas                   = local.worker_node_replicas
   aws_availability_zones     = local.region_azs
   create_oidc                = true

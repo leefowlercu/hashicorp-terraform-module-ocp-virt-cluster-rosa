@@ -11,7 +11,4 @@ locals {
 
   # Calculate worker node replicas based on multi-az setting
   worker_node_replicas = var.multi_az ? 3 : 2
-
-  # If cluster_name is not null, use that, otherwise generate a random cluster name
-  cluster_name = coalesce(var.cluster_name, "rosa-${random_string.random_name.result}")
 }

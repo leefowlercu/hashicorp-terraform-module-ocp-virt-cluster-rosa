@@ -15,3 +15,9 @@ default_aws_tags = {
 }
 
 additional_tags = {}
+
+### Kubernetes Provider Variables (Phase 2)
+# Set create_kubernetes_resources = true after cluster is created
+create_kubernetes_resources = true
+cluster_api_url_override    = "https://api.i5l5s2f8k3e6t2a.b08k.p3.openshiftapps.com:443"
+cluster_domain_override     = "i5l5s2f8k3e6t2a.b08k.p3.openshiftapps.com"

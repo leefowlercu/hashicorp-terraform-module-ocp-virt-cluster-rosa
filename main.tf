@@ -21,8 +21,12 @@ module "rosa_hcp" {
 ### Terraform Automation Service Account
 # Creates a service account with cluster-admin privileges and a long-lived token
 # for downstream Terraform workspaces that need to use kubernetes_manifest resources
+#
+# Only created when create_kubernetes_resources = true (Phase 2)
 
 resource "kubernetes_service_account_v1" "terraform" {
+  count = var.create_kubernetes_resources ? 1 : 0
+
   metadata {
     name      = "terraform-automation"
     namespace = "kube-system"
@@ -30,6 +34,8 @@ resource "kubernetes_service_account_v1" "terraform" {
 }
 
 resource "kubernetes_cluster_role_binding_v1" "terraform_admin" {
+  count = var.create_kubernetes_resources ? 1 : 0
+
   metadata {
     name = "terraform-automation-admin"
   }
@@ -40,17 +46,19 @@ resource "kubernetes_cluster_role_binding_v1" "terraform_admin" {
   }
   subject {
     kind      = "ServiceAccount"
-    name      = kubernetes_service_account_v1.terraform.metadata[0].name
-    namespace = kubernetes_service_account_v1.terraform.metadata[0].namespace
+    name      = kubernetes_service_account_v1.terraform[0].metadata[0].name
+    namespace = kubernetes_service_account_v1.terraform[0].metadata[0].namespace
   }
 }
 
 resource "kubernetes_secret_v1" "terraform_token" {
+  count = var.create_kubernetes_resources ? 1 : 0
+
   metadata {
     name      = "terraform-automation-token"
     namespace = "kube-system"
     annotations = {
-      "kubernetes.io/service-account.name" = kubernetes_service_account_v1.terraform.metadata[0].name
+      "kubernetes.io/service-account.name" = kubernetes_service_account_v1.terraform[0].metadata[0].name
     }
   }
   type = "kubernetes.io/service-account-token"

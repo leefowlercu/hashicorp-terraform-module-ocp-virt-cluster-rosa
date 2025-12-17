@@ -67,3 +67,23 @@ variable "admin_password" {
   sensitive   = true
   description = "The password for the cluster admin user."
 }
+
+### Kubernetes Provider Variables (for two-phase deployment)
+
+variable "create_kubernetes_resources" {
+  type        = bool
+  default     = false
+  description = "Set to true after cluster is created to enable kubernetes resource creation. Requires cluster_api_url and cluster_domain to be set."
+}
+
+variable "cluster_api_url_override" {
+  type        = string
+  default     = ""
+  description = "Override for cluster API URL. Set this from cluster_api_url output after Phase 1."
+}
+
+variable "cluster_domain_override" {
+  type        = string
+  default     = ""
+  description = "Override for cluster domain. Set this from cluster_domain output after Phase 1."
+}

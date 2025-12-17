@@ -57,7 +57,7 @@ provider "kubernetes" {
         # Request token using challenging client flow
         # Build auth header manually to avoid shell escaping issues with special characters
         AUTH_HEADER=$(printf '%s:%s' "$OAUTH_USERNAME" "$OAUTH_PASSWORD" | base64 | tr -d '\n')
-        HTTP_CODE=$(curl -sk -o /dev/null -w "%{http_code}" -H "Authorization: Basic $AUTH_HEADER" -H "X-CSRF-Token: 1" "$OAUTH_URL")
+        HTTP_CODE=$(curl -sk -o /dev/null -w "%%{http_code}" -H "Authorization: Basic $AUTH_HEADER" -H "X-CSRF-Token: 1" "$OAUTH_URL")
         HEADERS=$(curl -skI -H "Authorization: Basic $AUTH_HEADER" -H "X-CSRF-Token: 1" "$OAUTH_URL" 2>&1)
 
         # Extract token from Location header redirect

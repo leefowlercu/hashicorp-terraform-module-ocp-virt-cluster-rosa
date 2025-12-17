@@ -17,3 +17,41 @@ module "rosa_hcp" {
   admin_credentials_username = var.admin_username
   admin_credentials_password = var.admin_password
 }
+
+### Terraform Automation Service Account
+# Creates a service account with cluster-admin privileges and a long-lived token
+# for downstream Terraform workspaces that need to use kubernetes_manifest resources
+
+resource "kubernetes_service_account_v1" "terraform" {
+  metadata {
+    name      = "terraform-automation"
+    namespace = "kube-system"
+  }
+}
+
+resource "kubernetes_cluster_role_binding_v1" "terraform_admin" {
+  metadata {
+    name = "terraform-automation-admin"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = kubernetes_service_account_v1.terraform.metadata[0].name
+    namespace = kubernetes_service_account_v1.terraform.metadata[0].namespace
+  }
+}
+
+resource "kubernetes_secret_v1" "terraform_token" {
+  metadata {
+    name      = "terraform-automation-token"
+    namespace = "kube-system"
+    annotations = {
+      "kubernetes.io/service-account.name" = kubernetes_service_account_v1.terraform.metadata[0].name
+    }
+  }
+  type = "kubernetes.io/service-account-token"
+}

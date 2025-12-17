@@ -31,3 +31,9 @@ output "cluster_admin_password" {
   value       = module.rosa_hcp.cluster_admin_password
   sensitive   = true
 }
+
+output "cluster_token" {
+  description = "Service account token for Terraform automation."
+  value       = kubernetes_secret_v1.terraform_token.data["token"]
+  sensitive   = true
+}

@@ -25,9 +25,9 @@ provider "rhcs" {}
 # Phase 2: Set cluster_api_url_override, cluster_domain_override, create_kubernetes_resources = true
 
 locals {
-  # Use override variables if set, otherwise use placeholder to prevent provider init errors
-  k8s_host           = var.cluster_api_url_override != "" ? var.cluster_api_url_override : "https://placeholder.local"
-  k8s_cluster_domain = var.cluster_domain_override != "" ? var.cluster_domain_override : "placeholder.local"
+  # Use override variables only when Phase 2 is enabled, otherwise use placeholder to prevent provider init errors
+  k8s_host           = var.create_kubernetes_resources && var.cluster_api_url_override != "" ? var.cluster_api_url_override : "https://placeholder.local"
+  k8s_cluster_domain = var.create_kubernetes_resources && var.cluster_domain_override != "" ? var.cluster_domain_override : "placeholder.local"
 }
 
 provider "kubernetes" {

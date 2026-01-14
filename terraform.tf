@@ -1,4 +1,11 @@
 terraform {
+  cloud {
+    organization = "hashicorp-sandbox-lf"
+    workspaces {
+      name = "ocp-virt-cluster-rosa"
+    }
+  }
+
   required_version = ">= 1.9"
 
   required_providers {

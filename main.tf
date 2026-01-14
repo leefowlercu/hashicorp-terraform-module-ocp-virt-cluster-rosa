@@ -24,42 +24,42 @@ module "rosa_hcp" {
 #
 # Only created when create_kubernetes_resources = true (Phase 2)
 
-# resource "kubernetes_service_account_v1" "terraform" {
-#   count = var.create_kubernetes_resources ? 1 : 0
+resource "kubernetes_service_account_v1" "terraform" {
+  count = var.create_kubernetes_resources ? 1 : 0
 
-#   metadata {
-#     name      = "terraform-automation"
-#     namespace = "kube-system"
-#   }
-# }
+  metadata {
+    name      = "terraform-automation"
+    namespace = "kube-system"
+  }
+}
 
-# resource "kubernetes_cluster_role_binding_v1" "terraform_admin" {
-#   count = var.create_kubernetes_resources ? 1 : 0
+resource "kubernetes_cluster_role_binding_v1" "terraform_admin" {
+  count = var.create_kubernetes_resources ? 1 : 0
 
-#   metadata {
-#     name = "terraform-automation-admin"
-#   }
-#   role_ref {
-#     api_group = "rbac.authorization.k8s.io"
-#     kind      = "ClusterRole"
-#     name      = "cluster-admin"
-#   }
-#   subject {
-#     kind      = "ServiceAccount"
-#     name      = kubernetes_service_account_v1.terraform[0].metadata[0].name
-#     namespace = kubernetes_service_account_v1.terraform[0].metadata[0].namespace
-#   }
-# }
+  metadata {
+    name = "terraform-automation-admin"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = kubernetes_service_account_v1.terraform[0].metadata[0].name
+    namespace = kubernetes_service_account_v1.terraform[0].metadata[0].namespace
+  }
+}
 
-# resource "kubernetes_secret_v1" "terraform_token" {
-#   count = var.create_kubernetes_resources ? 1 : 0
+resource "kubernetes_secret_v1" "terraform_token" {
+  count = var.create_kubernetes_resources ? 1 : 0
 
-#   metadata {
-#     name      = "terraform-automation-token"
-#     namespace = "kube-system"
-#     annotations = {
-#       "kubernetes.io/service-account.name" = kubernetes_service_account_v1.terraform[0].metadata[0].name
-#     }
-#   }
-#   type = "kubernetes.io/service-account-token"
-# }
+  metadata {
+    name      = "terraform-automation-token"
+    namespace = "kube-system"
+    annotations = {
+      "kubernetes.io/service-account.name" = kubernetes_service_account_v1.terraform[0].metadata[0].name
+    }
+  }
+  type = "kubernetes.io/service-account-token"
+}

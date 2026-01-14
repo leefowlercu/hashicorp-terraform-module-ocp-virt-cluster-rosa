@@ -32,10 +32,10 @@ output "cluster_admin_password" {
   sensitive   = true
 }
 
-### Kubernetes Outputsß
+### Kubernetes Outputs
 
-# output "cluster_token" {
-#   description = "Service account token for Terraform automation. Only available when create_kubernetes_resources = true."
-#   value       = var.create_kubernetes_resources ? kubernetes_secret_v1.terraform_token[0].data["token"] : null
-#   sensitive   = true
-# }
+output "cluster_token" {
+  description = "Service account token for Terraform automation. Only available when create_kubernetes_resources = true."
+  value       = var.create_kubernetes_resources ? kubernetes_secret_v1.terraform_token[0].data["token"] : null
+  sensitive   = true
+}

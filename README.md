@@ -47,7 +47,7 @@ aws_subnet_ids       = ["subnet-xxx", "subnet-yyy", "subnet-zzz"]
 cluster_name         = "my-rosa-cluster"
 openshift_version    = "4.20.5"
 private_cluster      = false
-compute_machine_type = "m6i.xlarge"
+compute_machine_type = "m7g.metal" # Bare metal instance type required for OCP Virt. support.
 admin_username       = "cluster-admin"
 admin_password       = "YourSecurePassword123!"
 ```

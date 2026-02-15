@@ -5,7 +5,7 @@
 [![RHCS](https://img.shields.io/badge/RHCS-Provider%201.7-EE0000?logo=redhat)](https://registry.terraform.io/providers/terraform-redhat/rhcs/latest)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Terraform module for deploying Red Hat OpenShift Service on AWS (ROSA) Hosted Control Plane (HCP) clusters with integrated Kubernetes provider authentication for downstream automation.
+Terraform module for deploying Red Hat OpenShift Service on AWS (ROSA) Hosted Control Plane clusters with integrated Kubernetes provider authentication for downstream automation.
 
 **Current Version**: N/A
 
